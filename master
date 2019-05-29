@@ -1,0 +1,78 @@
+import pandas as pd
+
+import numpy as np
+
+import nltk
+
+from nltk.tokenize import sent_tokenize
+
+from nltk.tokenize import word_tokenize
+
+import nltk.corpus
+
+from nltk.corpus import wordnet
+
+from fuzzywuzzy import fuzz, process
+
+import hashlib
+
+#establishkeywords
+#keyword index is initially established by the developer/user
+
+keywords = ["blah"]
+searchwords = [keywords]
+
+print("You have identified the following of interest:")
+print(keywords)
+print("----------------------------------------------------------")
+
+
+#build out synonyms/antonyms of keywords
+#we are going to use the package pyenchant to get synonyms and antonyms
+#Importing the nltk wordnet, will give suggested alternate words if spelling off and syn/ant
+
+synonyms = []
+antonyms = []
+
+for k in keywords:
+    for syns in wordnet.synsets(k):
+        #print(syns[0].name())
+        #print(syns[0].lemmas()[0].name())
+        #print(syns[0].definition())
+        #print(syns[0].examples())
+        for l in syns.lemmas():
+            synonyms.append(l.name())
+  
+            if l.antonyms():
+                antonyms.append(l.antonyms()[0].name())
+    searchwords = [searchwords + synonyms + antonyms]        
+    
+#open file and tokenize
+f = open("YOUR TEXT FILE.txt", "r+")
+
+#conduct fuzzy search of file
+
+for s in searchwords:
+    term = str(s)
+    print("---break---", )
+    fuzzyset=process.extractBests(term, f, score_cutoff=40, limit=100)
+    ##if fuzzyset in sentences:
+      #print sentence
+    print(fuzzyset)
+    print("---break---")
+    #grab the whole sentence
+    def sentence_finder(fuzzyset, f):     
+        sentences = nltk.sent_tokenize(f)
+        return [sent for sent in sentences if fuzzyset in sentences]
+        print(result)   
+    
+
+#to do: grab entence before, and sentence after
+
+#to do: append keyword related summary into a master overall document
+
+#to do: an interesting future feature would be to assess this master and create a "related words" appendix to improve triage
+
+#summarize the master overall document using NLP
+
+f.close()
