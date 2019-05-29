@@ -11,31 +11,36 @@ from nltk.tokenize import word_tokenize
 
 import nltk.corpus
 
-from nltk.corpus import wordnet
+from nltk.corpus import wordnet, stopwords
 
 from fuzzywuzzy import fuzz, process
 
 import hashlib
 
+import gensim
+
+from gensim.summarization import summarize
+
+from gensim.summarization import keywords
+
+import array
+
 #establishkeywords
 #keyword index is initially established by the developer/user
 
-keywords = ["politics", "economics", "treason", "slaves"]
-searchwords = [keywords]
+inputwords = ["politics", "economics", "treason", "slaves"]
+searchwords = [inputwords]
 
 print("You have identified the following of interest:")
-print(keywords)
+print(inputwords)
 print("----------------------------------------------------------")
 
-
-#build out synonyms/antonyms of keywords
-#we are going to use the package pyenchant to get synonyms and antonyms
 #Importing the nltk wordnet, will give suggested alternate words if spelling off and syn/ant
 
 synonyms = []
 antonyms = []
 
-for k in keywords:
+for k in inputwords:
     for syns in wordnet.synsets(k):
         #print(syns[0].name())
         #print(syns[0].lemmas()[0].name())
@@ -59,6 +64,9 @@ print("----------------------------------------------------------")
 print("----------------------------------------------------------")
 print("----------------------------------------------------------")
 
+
+#should consider a pandas input here to make sure all variants/spellings captured
+
 #open file and tokenize
 #To Do: Open and read all files in a folder and tokenize instead of one file at a time
 f=open("Text/natsrvc.txt").read()
@@ -70,12 +78,37 @@ for s in searchwords:
     fuzzyset = process.extractBests(term, sentences, score_cutoff=40, limit=100)
     print(fuzzyset)
     print("---break---")
-    
-#to consider: grab sentence before, and sentence after
+    #to consider: grab sentence before and sentence after in + to just match here
 
-#to do: append keyword related summary into a master overall document
+meaningful_text = str(fuzzyset)
 
-#to consider: assess this master and create a "related words" appendix to gradually make our keyword index better
+# to do: clean up output to get rid of line breaks
 
-#summarize the master overall document using NLP
+#begin section to start summarizing since gensim choking
+#alternative is to get gensim.summarization.summarize(meaningful_text) to work..  can't p
+#stopWords = set(stopwords.words("english"))
+#words = word_tokenize(meaningful_text)
+
+
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+
+
+#to do: append keyword related summary into a master overall document and clean up
+
+#assess this master and create a "related words" appendix to gradually make our keyword index better
+#easily done next step is to have this call keywords from a DB and update the DB
+print(gensim.summarization.keywords(meaningful_text))
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+inputwords.append(word_tokenize(gensim.summarization.keywords(meaningful_text)))
+print(inputwords)
+
+#summarize the master overall document using gensim
+print(gensim.summarization.summarize(meaningful_text)) 
+#this last line of code isn't working because meaningful_text is a single string.  I am having problems
+#turning the single string into an array of strings where each entry in the array is an individual sentences.
+#if we can that figured out, gensim will then summarize
 
