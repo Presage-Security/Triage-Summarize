@@ -28,7 +28,7 @@ import array
 #establishkeywords
 #keyword index is initially established by the developer/user
 
-inputwords = ["politics", "economics", "treason", "slaves"]
+inputwords = ["politics", "economics", "money"]
 searchwords = [inputwords]
 
 print("You have identified the following of interest:")
@@ -84,18 +84,13 @@ meaningful_text = str(fuzzyset)
 
 # to do: clean up output to get rid of line breaks
 
-#begin section to start summarizing since gensim choking
-#alternative is to get gensim.summarization.summarize(meaningful_text) to work..  can't p
+#due to trouble with gensim, considering use of stopwords below is placeholder
 #stopWords = set(stopwords.words("english"))
 #words = word_tokenize(meaningful_text)
 
-
 print("----------------------------------------------------------")
 print("----------------------------------------------------------")
 print("----------------------------------------------------------")
-
-
-#to do: append keyword related summary into a master overall document and clean up
 
 #assess this master and create a "related words" appendix to gradually make our keyword index better
 #easily done next step is to have this call keywords from a DB and update the DB
