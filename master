@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 import numpy as np
@@ -19,7 +20,7 @@ import hashlib
 #establishkeywords
 #keyword index is initially established by the developer/user
 
-keywords = ["blah"]
+keywords = ["politics", "economics", "treason", "slaves"]
 searchwords = [keywords]
 
 print("You have identified the following of interest:")
@@ -47,32 +48,34 @@ for k in keywords:
                 antonyms.append(l.antonyms()[0].name())
     searchwords = [searchwords + synonyms + antonyms]        
     
-#open file and tokenize
-f = open("YOUR TEXT FILE.txt", "r+")
+    print("----------------------------------------------------------")
 
-#conduct fuzzy search of file
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+print("I've taken the liberty to also search these common synonyms and antonyms: ")
+print(searchwords)
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+print("----------------------------------------------------------")
+
+#open file and tokenize
+#To Do: Open and read all files in a folder and tokenize instead of one file at a time
+f=open("Text/natsrvc.txt").read()
+sentences=sent_tokenize(f)
 
 for s in searchwords:
     term = str(s)
     print("---break---", )
-    fuzzyset=process.extractBests(term, f, score_cutoff=40, limit=100)
-    ##if fuzzyset in sentences:
-      #print sentence
+    fuzzyset = process.extractBests(term, sentences, score_cutoff=40, limit=100)
     print(fuzzyset)
     print("---break---")
-    #grab the whole sentence
-    def sentence_finder(fuzzyset, f):     
-        sentences = nltk.sent_tokenize(f)
-        return [sent for sent in sentences if fuzzyset in sentences]
-        print(result)   
     
-
-#to do: grab entence before, and sentence after
+#to consider: grab sentence before, and sentence after
 
 #to do: append keyword related summary into a master overall document
 
-#to do: an interesting future feature would be to assess this master and create a "related words" appendix to improve triage
+#to consider: assess this master and create a "related words" appendix to gradually make our keyword index better
 
 #summarize the master overall document using NLP
 
-f.close()
