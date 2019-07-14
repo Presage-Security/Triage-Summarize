@@ -18,9 +18,9 @@ from fuzzywuzzy import fuzz, process
 
 import itertools
 
-all_files = os.listdir("C:/Users/olive/source/repos/extractor/extractor/Text")
-all_files_count = len(os.listdir("C:/Users/olive/source/repos/extractor/extractor/Text"))
-set_path = os.chdir("C:/Users/olive/source/repos/extractor/extractor/Text")
+all_files = os.listdir("INSERT YOUR FILE PATH")
+all_files_count = len(os.listdir("INSERT YOUR FILE PATH"))
+set_path = os.chdir("INSERT YOUR FILE PATH")
 count = 0 
 
 #For Use in Cleaning the Text
