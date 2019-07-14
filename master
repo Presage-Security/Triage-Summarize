@@ -1,7 +1,12 @@
+"""
+This script runs the application as master, conducts the search, and returns the results.
+"""
 
-import pandas as pd
+import os
 
-import numpy as np
+from Input_to_Searchwords import SUBJECT, AFFILIATION_searchwords, LOCATIONS_searchwords, BIO_searchwords
+
+from Input_to_Searchwords import SELECTORS, ASSESSMENTS_searchwords, CONSIDERATIONS_searchwords, CONTACT_HISTORY
 
 import nltk
 
@@ -9,93 +14,118 @@ from nltk.tokenize import sent_tokenize
 
 from nltk.tokenize import word_tokenize
 
-import nltk.corpus
-
-from nltk.corpus import wordnet, stopwords
-
 from fuzzywuzzy import fuzz, process
 
-import logging
+import itertools
 
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+all_files = os.listdir("C:/Users/olive/source/repos/extractor/extractor/Text")
+all_files_count = len(os.listdir("C:/Users/olive/source/repos/extractor/extractor/Text"))
+set_path = os.chdir("C:/Users/olive/source/repos/extractor/extractor/Text")
+count = 0 
 
-import gensim
-
-from gensim.summarization import summarize
-
-from gensim.summarization import keywords
-
-from gensim.parsing.preprocessing import strip_multiple_whitespaces, strip_non_alphanum, strip_tags
-
-import json
-
-
-inputwords = ["politics", "conservative", "values", "challenge"]
-
-f=open("Text/natsrvc.txt").read()
-#open file and tokenize
-#To Do: Open and read all files in a folder and tokenize instead of one file at a time
-
-print("----------------------------------------------------------")
-print("----------------------------------------------------------")
-print("----------------------------------------------------------")
-
-searchwords = [inputwords]
-
-synonyms = []
-antonyms = []
-
-for k in inputwords:
-    for syns in wordnet.synsets(k):
-        for l in syns.lemmas():
-            synonyms.append(l.name())
-  
-            if l.antonyms():
-                antonyms.append(l.antonyms()[0].name())
-    searchwords = [searchwords + synonyms + antonyms]        
-
-print("----------------------------------------------------------")
-print("----------------------------------------------------------")
-print("----------------------------------------------------------")
-print(searchwords)
-
-sentences=sent_tokenize(f)
-
-#allow user to lower score_cutoff for their searchwords to have higher rate of hit
-#by splitting can also have more robust summary
-for s in searchwords:
-    term = str(s)
-    fuzzyset = process.extractBests(term, sentences, score_cutoff=30, limit=100)
-
-#now search based on top 10 keywords *can be revised
-relevant_words = keywords(f, words=10, split=True)
-
-for r in relevant_words:
-    term = str(r)
-    keyset = process.extractBests(term, sentences, score_cutoff=80, limit=100)
-
-fuzz_text=str(fuzzyset)
-key_text=str(keyset)
-clean_text= (fuzz_text + " " + key_text)
-print(clean_text)
-
+#For Use in Cleaning the Text
 def myreplace(mystr):
     thetext = mystr.replace("\u2019","'").replace("\u201c","\"").replace("\u201d","\"")
     thetext = thetext.replace("\u2018","'").replace("\u2013","-").replace("\u2022","\"")
     thetext = thetext.replace("\u000d",chr(13))
     thetext = thetext.replace(chr(10)," ")
     thetext = thetext.replace(chr(39),"''")
+    thetext = thetext.replace("\\n", " ")
+    thetext = thetext.strip("[")
+    thetext = thetext.strip("]")
     return thetext
 
-clean_text = gensim.parsing.preprocessing.strip_multiple_whitespaces(clean_text)
-#clean_text = gensim.parsing.preprocessing.strip_non_alphanum(clean_text)
-clean_text = gensim.parsing.preprocessing.strip_tags(clean_text)
-clean_text = myreplace(clean_text).replace("\\n"," ")
+#
+#
+#
+#We set these as global variables outside the if/for loops so they bin all in same lists.
+AFFILIATION_fuzzyset = []
+LOCATIONS_fuzzset = []
+BIO_fuzzyset = []
+ASSESSMENTS_fuzzyset = []
+CONSIDERATIONS_fuzzyset = []
 
+#
+#
+#
+#This goes through all of the files in a folder and extracts what is relevant to
+#lists from searchwords relevant to each block associated with info blocks of importance
+if count < all_files_count:
+    for file in all_files:
+        dork = open(file, "rt")
+        bobo = dork.read()
+        filer = str(all_files[count])
+        sentences = sent_tokenize(bobo)
 
-g=open("Text/master.txt", "r+")
+        for s in sentences:
+            cleaner = str(s)
+            cleaner = myreplace(cleaner)
+            s = cleaner
 
-g.write(clean_text)
+        if ".txt" in filer:
+            filer = filer.strip(".txt")
+        fileout_name = (filer + ".json")
+        print(fileout_name)
+        
+        fuzzyset = []
+        for s in AFFILIATION_searchwords:
+            term = str(s)
+            AFFILIATION_fuzzyset = process.extractBests(term, sentences, score_cutoff=50, limit=100)
 
-print(clean_text)
-#next step is cleaning out the token scores, parsing into >10 sentences, then using gensim summarization
+        for s in LOCATIONS_searchwords:
+            term = str(s)
+            LOCATIONS_fuzzyset = process.extractBests(term, sentences, score_cutoff=50, limit=100)
+
+        for s in BIO_searchwords:
+            term = str(s)
+            BIO_fuzzyset = process.extractBests(term, sentences, score_cutoff=50, limit=100)
+
+        for s in ASSESSMENTS_searchwords:
+            term = str(s)
+            ASSESSMENTS_fuzzyset = process.extractBests(term, sentences, score_cutoff=50, limit=100)
+
+        for s in CONSIDERATIONS_searchwords:
+            term = str(s)
+            CONSIDERATIONS_fuzzyset = process.extractBests(term, sentences, score_cutoff=50, limit=100)
+        count = count + 1
+
+#
+#
+#
+#CLEAN-UP RESULTS
+AFFILIATION_fuzzyset_return = str(AFFILIATION_fuzzyset)
+AFFILIATION_fuzzyset_return = myreplace(AFFILIATION_fuzzyset_return)
+AFFILIATION_final_data = sent_tokenize(AFFILIATION_fuzzyset_return)
+
+LOCATIONS_fuzzyset_return = str(LOCATIONS_fuzzyset)
+LOCATIONS_fuzzyset_return = myreplace(LOCATIONS_fuzzyset_return)
+LOCATIONS_final_data = sent_tokenize(LOCATIONS_fuzzyset_return)
+
+BIO_fuzzyset_return = str(BIO_fuzzyset)
+BIO_fuzzyset_return = myreplace(BIO_fuzzyset_return)
+BIO_final_data = sent_tokenize(BIO_fuzzyset_return)
+
+ASSESSMENTS_fuzzyset_return = str(ASSESSMENTS_fuzzyset)
+ASSESSMENTS_fuzzyset_return = myreplace(ASSESSMENTS_fuzzyset_return)
+ASSESSMENTS_final_data = sent_tokenize(ASSESSMENTS_fuzzyset_return)
+
+CONSIDERATIONS_fuzzyset_return = str(CONSIDERATIONS_fuzzyset)
+CONSIDERATIONS_fuzzyset_return = myreplace(CONSIDERATIONS_fuzzyset_return)
+CONSIDERATIONS_final_data = sent_tokenize(CONSIDERATIONS_fuzzyset_return)
+
+standard_result_fields = ["SUBJECT", "AFFILIATION", "LOCATIONS", "BIO", "SELECTORS", "ASSESSMENT", "CONSIDERATIONS", "CONTACT HISTORY"]
+
+SEARCH_RESULTS_DATA = [SUBJECT, AFFILIATION_final_data, LOCATIONS_final_data, BIO_final_data, SELECTORS, ASSESSMENTS_final_data, CONSIDERATIONS_final_data, CONTACT_HISTORY]
+
+class BLOCK_SUMMARIZED_RESULTS:
+    def __init__(self, field_name, field_results):
+        self.field_name = field_name
+        self.field_results = field_results
+        
+summarized_results_dict = dict(itertools.zip_longest(standard_result_fields, SEARCH_RESULTS_DATA))
+print(summarized_results_dict)
+
+#instead of printing you can just as easily do a JSONencoder or dump straight to your output
+#you could probably improve the near term quality by having a robust input set from words
+#that we know are key and routinely used; do the syn/ant - but then search direct without fuzzing
+#or alternately -- be focused and just do a fuzz of your keywords w/out syn/ant
