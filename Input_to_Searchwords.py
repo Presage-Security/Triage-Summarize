@@ -12,13 +12,13 @@ from nltk.corpus import wordnet
 #
 #
 #SUBJECT BLOCK
-SUBJECT = ["SUBJECT"]
+SUBJECT = [""]#SUBJECT//SET TO THE SUBJ NAME AND COMPARATIVE PROFILE YOU USE
 
 #
 #
 #
 #AFFILIATION BLOCK
-AFFILIATION_inputwords = ["CONSERVATIVE", "LIBERAL"]
+AFFILIATION_inputwords = [""]#POINT TO INDEX OR POSSIBLE AFFILIATIONS AND WORDS THAT WILL FIND SENTENCES WITH UNACCOUNTED FOR AFFILS
 AFFILIATION_searchwords = []
 for k in AFFILIATION_inputwords:
     synonyms = []
@@ -35,7 +35,7 @@ for k in AFFILIATION_inputwords:
 #
 #
 #LOCATIONS BLOCK
-LOCATIONS_inputwords = ["LIVED", "RESIDED"]
+LOCATIONS_inputwords = [""]#GRAB YOUR LOCATIONS WHERE PREV SEEN AND USE INDEX OF WORDS THAT WILL FIND SENTENCES REVEALING KEY LOCS (LIVES AT)
 LOCATIONS_searchwords = []
 for k in LOCATIONS_inputwords:
     synonyms = []
@@ -52,7 +52,7 @@ for k in LOCATIONS_inputwords:
 #
 #
 #BIO BLOCK
-BIO_inputwords = ["mother", "father", "daughter", "son", "family", "age", "studied"]
+BIO_inputwords = [""]#IN PUT YOUR BIO WORKS LIKE mother", "father", "daughter", "son", "family", "age", "studied
 BIO_searchwords = []
 for k in BIO_inputwords:
     synonyms = []
@@ -75,7 +75,7 @@ SELECTORS = ["SELECTORS"] #GET your script to read out selectors
 #
 #
 #ASSESSMENT BLOCK
-ASSESSMENT_inputwords = ["assessed", "motivated", "vulnerabilities", "loved", "amenable", "reliable"]
+ASSESSMENT_inputwords = [""]#IMPORT WORDS THAT CHARACTERIZE THE KEY THINGS TO KNOW AND VARIANTS OF ASSESS/
 ASSESSMENTS_searchwords = []
 for k in ASSESSMENT_inputwords:
     synonyms = []
@@ -92,7 +92,7 @@ for k in ASSESSMENT_inputwords:
 #
 #
 #CONSIDERATIONS BLOCK
-CONSIDERATIONS_inputwords = ["security", "consideration", "hostile"]
+CONSIDERATIONS_inputwords = [""]#Add words that will pull sentences you might want someone to know e.g. 'hostile', 'violent'
 CONSIDERATIONS_searchwords = []
 for k in CONSIDERATIONS_inputwords:
     synonyms = []
@@ -109,5 +109,4 @@ for k in CONSIDERATIONS_inputwords:
 #
 #
 #CONTACT BLOCK
-CONTACT_HISTORY = ["abc"] #suggest grab whole first para from what you have
-
+CONTACT_HISTORY = ["abc"] #point to your existing.  return the whole first para on each item
